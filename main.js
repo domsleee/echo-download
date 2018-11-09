@@ -1,4 +1,7 @@
-
+var get_parent_with_class = (el, class_name) => {
+  if (el.className.split(' ').includes(class_name)) return el;
+  return get_parent_with_class(el.parentNode, class_name);
+}
 function log(s) {
   console.log('echo-download:', s);
 }
@@ -34,8 +37,9 @@ function get_name(index) {
 async function close_everything() {
   var i = 0;
   while ($('.downloadBtn').length) {
+    var el = get_parent_with_class($('.downloadBtn')[0], 'modal');
     log('attempting to close everything ('+i+')...');
-    $('.nav')[0].click();
+    el.remove();
     await sleep(50);
     i += 1;
   }
@@ -71,14 +75,11 @@ function add_buttons() {
     $videos[i].parentNode.appendChild($elem);
   }
   $('.download_icon').click(function(e) {
-    var get_class_row = (el) => {
-      if (el.className === 'class-row') return el;
-      return get_class_row(el.parentNode);
-    }
+
     var get_index_of = (el) => {
       return Array.prototype.indexOf.call(el.parentNode.children, el);
     }
-    var el = get_class_row(e.target);
+    var el = get_parent_with_class(e.target, 'class-row');
     var index = get_index_of(el);
     log('Found index: ' + index);
     go(index);
