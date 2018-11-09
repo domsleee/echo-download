@@ -33,7 +33,7 @@ function get_name(index) {
 }
 async function close_everything() {
   var i = 0;
-  while ($('.modal-body').is(':visible')) {
+  while ($('.downloadBtn').length) {
     log('attempting to close everything ('+i+')...');
     $('.nav')[0].click();
     await sleep(50);
@@ -71,15 +71,17 @@ function add_buttons() {
     $videos[i].parentNode.appendChild($elem);
   }
   $('.download_icon').click(function(e) {
-    var get_nth_parent = (el, n) => {
-      if (n == 0) return el;
-      return get_nth_parent(el.parentNode, n-1);
+    var get_class_row = (el) => {
+      if (el.className === 'class-row') return el;
+      return get_class_row(el.parentNode);
     }
     var get_index_of = (el) => {
       return Array.prototype.indexOf.call(el.parentNode.children, el);
     }
-    var el = get_nth_parent(e.target, 7);
-    go(get_index_of(el));
+    var el = get_class_row(e.target);
+    var index = get_index_of(el);
+    log('Found index: ' + index);
+    go(index);
     e.stopPropagation();
   });
 }
